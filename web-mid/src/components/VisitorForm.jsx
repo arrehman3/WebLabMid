@@ -1,17 +1,30 @@
-// src/components/VisitorForm.jsx
-import { useState } from "react";
-import VisitorList from './VisitorList';
+import { useState, useEffect } from "react";
+import VisitorList from "./VisitorList";
 
 export default function VisitorForm() {
   const [formData, setFormData] = useState({
     name: "",
     toVisit: "",
     purpose: "",
-    time:""
   });
   const [message, setMessage] = useState("");
   const [visitors, setVisitors] = useState([]);
-  const timestamp = new Date().toLocaleString();
+
+  // Load visitors from localStorage when the component mounts
+  useEffect(() => {
+    const savedVisitors = localStorage.getItem("visitors");
+    if (savedVisitors) {
+      setVisitors(JSON.parse(savedVisitors));
+    }
+  }, []);
+
+  // Save visitors to localStorage every time the list changes
+  useEffect(() => {
+    if (visitors.length > 0) {
+      localStorage.setItem("visitors", JSON.stringify(visitors));
+    }
+  }, [visitors]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -23,9 +36,14 @@ export default function VisitorForm() {
       return;
     }
 
-    setVisitors([...visitors, { ...formData, timestamp }]); // Add the new visitor
+    const timestamp = new Date().toLocaleString();
+    const newVisitor = { ...formData, timestamp };
+
+    // Add the new visitor to the list and update state
+    setVisitors((prev) => [...prev, newVisitor]);
     setMessage("Visitor logged successfully! ✅");
-    setFormData({ name: "", toVisit: "", purpose: "" }); // Reset form
+
+    setFormData({ name: "", toVisit: "", purpose: "" }); // reset
   };
 
   return (
@@ -66,7 +84,6 @@ export default function VisitorForm() {
 
       {message && <p className="mt-4 text-blue-600">{message}</p>}
 
-      {/* Display the Visitor List */}
       <VisitorList visitors={visitors} />
     </div>
   );
