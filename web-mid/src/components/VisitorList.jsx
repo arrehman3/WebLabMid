@@ -12,6 +12,7 @@ export default function VisitorList({ visitors }) {
                 <p className="font-medium">{visitor.name}</p>
                 <p className="text-sm text-gray-600">Visiting: {visitor.toVisit}</p>
                 <p className="text-sm text-gray-600">Purpose: {visitor.purpose}</p>
+                <p className="text-sm text-gray-600">Time: {visitor.timestamp}</p>
               </li>
             ))}
           </ul>

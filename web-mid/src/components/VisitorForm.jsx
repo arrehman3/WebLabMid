@@ -7,10 +7,11 @@ export default function VisitorForm() {
     name: "",
     toVisit: "",
     purpose: "",
+    time:""
   });
   const [message, setMessage] = useState("");
   const [visitors, setVisitors] = useState([]);
-
+  const timestamp = new Date().toLocaleString();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -22,7 +23,7 @@ export default function VisitorForm() {
       return;
     }
 
-    setVisitors([...visitors, formData]); // Add the new visitor
+    setVisitors([...visitors, { ...formData, timestamp }]); // Add the new visitor
     setMessage("Visitor logged successfully! ✅");
     setFormData({ name: "", toVisit: "", purpose: "" }); // Reset form
   };
