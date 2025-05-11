@@ -1,89 +1,56 @@
-import { useState, useEffect } from "react";
-import VisitorList from "./VisitorList";
+import { useEffect, useState } from "react";
+import VisitorList from './VisitorList';
 
 export default function VisitorForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    toVisit: "",
-    purpose: "",
-  });
+  const [formData, setFormData] = useState({ name: "", toVisit: "", purpose: ""});
   const [message, setMessage] = useState("");
   const [visitors, setVisitors] = useState([]);
 
-  // Load visitors from localStorage when the component mounts
+  // Fetch visitors from backend
   useEffect(() => {
-    const savedVisitors = localStorage.getItem("visitors");
-    if (savedVisitors) {
-      setVisitors(JSON.parse(savedVisitors));
-    }
+    fetch("http://localhost:5000/api/visitors")
+      .then(res => res.json())
+      .then(data => setVisitors(data));
   }, []);
-
-  // Save visitors to localStorage every time the list changes
-  useEffect(() => {
-    if (visitors.length > 0) {
-      localStorage.setItem("visitors", JSON.stringify(visitors));
-    }
-  }, [visitors]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.toVisit || !formData.purpose) {
-      setMessage("Please fill in all fields.");
-      return;
-    }
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const timestamp = new Date().toLocaleString();
-    const newVisitor = { ...formData, timestamp };
+  const response = await fetch("http://localhost:5000/api/visitors", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  });
 
-    // Add the new visitor to the list and update state
-    setVisitors((prev) => [...prev, newVisitor]);
+  // Log response status and response body
+  const data = await response.json();
+  console.log("Response:", data);
+
+  if (response.ok) {
+    setVisitors([data, ...visitors]);
     setMessage("Visitor logged successfully! ✅");
+    setFormData({ name: "", toVisit: "", purpose: ""}); // Reset form
+  } else {
+    console.log("Error:", data); // Log error
+    setMessage("Failed to log visitor.");
+  }
+};
 
-    setFormData({ name: "", toVisit: "", purpose: "" }); // reset
-  };
 
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Visitor Entry</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          placeholder="Visitor Name"
-          value={formData.name}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="toVisit"
-          placeholder="Resident to Visit"
-          value={formData.toVisit}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="purpose"
-          placeholder="Purpose"
-          value={formData.purpose}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Submit
-        </button>
+        <input type="text" name="name" placeholder="Visitor Name" value={formData.name} onChange={handleChange} className="w-full p-2 border rounded" />
+        <input type="text" name="toVisit" placeholder="Resident to Visit" value={formData.toVisit} onChange={handleChange} className="w-full p-2 border rounded" />
+        <input type="text" name="purpose" placeholder="Purpose" value={formData.purpose} onChange={handleChange} className="w-full p-2 border rounded" />
+        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit</button>
       </form>
-
       {message && <p className="mt-4 text-blue-600">{message}</p>}
-
       <VisitorList visitors={visitors} />
     </div>
   );
