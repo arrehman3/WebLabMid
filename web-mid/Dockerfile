@@ -1,47 +1,34 @@
-# Frontend Build Stage (Vite/React/Vue)
+# Stage 1: Build Frontend (Vite)
 FROM node:18-alpine AS frontend-build
-
-# Set working directory
 WORKDIR /app
-
-# Copy frontend files (excluding backend)
-COPY package*.json .
-COPY vite.config.js .
-COPY index.html .
-COPY src/ ./src/
-COPY public/ ./public/
-
-# Install and build frontend
+COPY package*.json vite.config.js index.html ./
+COPY src ./src
+COPY public ./public
 RUN npm install && npm run build
 
-# Backend Runtime Stage
-FROM node:18-alpine
+# Stage 2: Build Backend (Express)
+FROM node:18-alpine AS backend-build
+WORKDIR /app/backend
+COPY backend/package*.json .
+RUN npm install --production
+COPY backend .
 
-# Set working directory for backend
+# Stage 3: Production Image (Nginx + Express)
+FROM nginx:alpine
+WORKDIR /app
+
+# Copy Nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy frontend build
+COPY --from=frontend-build /app/dist /usr/share/nginx/html
+
+# Copy backend
+COPY --from=backend-build /app/backend /app/backend
 WORKDIR /app/backend
 
-# Copy backend package files
-COPY backend/package*.json .
-
-# Install backend production dependencies
+# Install production dependencies (if any peer deps are needed)
 RUN npm install --production
 
-# Copy backend source files
-COPY backend/ .
-
-# Copy frontend build from previous stage
-COPY --from=frontend-build /app/dist ./public
-
-# Environment variables
-ENV NODE_ENV=production
-ENV PORT=5000
-
-# Expose port
-EXPOSE 5000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:5000/ || exit 1
-
-# Command to run the backend
-CMD ["node", "index.js"]
+EXPOSE 80
+CMD sh -c "node index.js & nginx -g 'daemon off;'"
