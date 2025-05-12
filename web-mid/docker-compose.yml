@@ -19,7 +19,7 @@ services:
   # Frontend (build only)
   frontend:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile.frontend
     environment:
       - NODE_ENV=production
@@ -30,7 +30,7 @@ services:
   # Backend service
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile.backend
     environment:
       - NODE_ENV=production
