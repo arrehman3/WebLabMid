@@ -1,35 +1,13 @@
-FROM node:18-alpine as build
-
-# Set working directory
+# Build stage
+FROM node:18-alpine AS build
 WORKDIR /app
-
-# Copy package.json and package-lock.json
-COPY frontend/package*.json ./
-
-# Install dependencies
+COPY package*.json ./
 RUN npm install
-
-# Copy client source files
-COPY frontend/ ./
-
-# Set the API URL environment variable
-ARG REACT_APP_API_URL
-ENV REACT_APP_API_URL=$REACT_APP_API_URL
-
-# Build the React application
+COPY . ./
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
-
-# Copy built files from previous stage to nginx serve directory
 COPY --from=build /app/build /usr/share/nginx/html
-
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
-EXPOSE 80
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Remove this line ↓ (nginx.conf is mounted in compose)
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
