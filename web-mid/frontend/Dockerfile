@@ -10,7 +10,7 @@ COPY frontend/package*.json ./
 RUN npm install
 
 # Copy client source files
-COPY fontend/ ./
+COPY frontend/ ./
 
 # Set the API URL environment variable
 ARG REACT_APP_API_URL
