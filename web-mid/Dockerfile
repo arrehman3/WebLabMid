@@ -46,3 +46,8 @@ EXPOSE 5000
 # Command to run the backend
 CMD ["node", "index.js"]
 
+# Expose the port your app runs on
+EXPOSE 5000
+
+# Command to run the application
+CMD ["node", "index.js"]
