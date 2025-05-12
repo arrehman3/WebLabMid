@@ -1,31 +1,69 @@
 version: "3.8"
 
 services:
-  web:
-    build: .
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
     ports:
       - "80:80"
+      - "443:443"  # For HTTPS (needs SSL config)
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./frontend-dist:/usr/share/nginx/html  # Your built frontend files
+    depends_on:
+      - backend
+      - mongodb
+    networks:
+      - app-network
+
+  # Frontend (build only)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+    # No ports exposed - accessed via Nginx
+
+  # Backend service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     environment:
       - NODE_ENV=production
       - PORT=5000
-      - MONGO_URI=mongodb://mongodb:27017/secure-nest
+      - MONGO_URI=mongodb://mongodb:27017/secure-nest  # Using service name
+    ports:
+      - "5000:5000"  # Only needed for development
     depends_on:
-      mongodb:
-        condition: service_healthy
-    restart: unless-stopped
+      - mongodb
+    networks:
+      - app-network
 
+  # MongoDB service
   mongodb:
     image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: secure-nest
     volumes:
       - mongodb_data:/data/db
-    environment:
-      MONGO_INITDB_DATABASE: secure-nest
+    networks:
+      - app-network
     healthcheck:
-      test: mongosh --eval "db.adminCommand('ping')"
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
-      timeout: 30s
+      timeout: 5s
       retries: 3
-    restart: unless-stopped
 
 volumes:
   mongodb_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
