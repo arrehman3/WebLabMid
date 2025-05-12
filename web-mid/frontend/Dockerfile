@@ -1,13 +1,12 @@
 # Build stage
-FROM node:18-alpine AS build
+FROM node:18-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
+COPY package*.json .
 RUN npm install
-COPY . ./
-RUN npm run build
+COPY . .
+RUN npm run build  # Outputs to /app/dist
 
 # Production stage
 FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-# Remove this line ↓ (nginx.conf is mounted in compose)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist /usr/share/nginx/html
+# Remove nginx.conf copy (we'll mount it via compose)

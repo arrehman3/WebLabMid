@@ -1,25 +1,28 @@
+version: "3.8"
+
 services:
-  frontend:
-    build:
-      context: ./frontend
-    # No ports needed
-
-  backend:
-    build:
-      context: ./backend
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017/secure-nest
-
   nginx:
     image: nginx:alpine
     ports:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./frontend/build:/usr/share/nginx/html:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro  # Match your build output
     depends_on:
-      - frontend
       - backend
+
+  frontend:
+    build:
+      context: ./frontend
+    # No ports needed - served via nginx
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/secure-nest
+    depends_on:
+      - mongodb
 
   mongodb:
     image: mongo:latest
