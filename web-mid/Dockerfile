@@ -1,20 +1,18 @@
-# Frontend Build Stage
+# Frontend Build Stage (Vite/React/Vue)
 FROM node:18-alpine AS frontend-build
 
-# Set working directory for frontend (root)
+# Set working directory
 WORKDIR /app
 
-# Copy package files first for better caching
-COPY package*.json ./
+# Copy frontend files (excluding backend)
+COPY package*.json .
+COPY vite.config.js .
+COPY index.html .
+COPY src/ ./src/
+COPY public/ ./public/
 
-# Install frontend dependencies
-RUN npm install
-
-# Copy all frontend files (excluding backend folder)
-COPY . .
-
-# Build the frontend (adjust build command if different)
-RUN npm run build
+# Install and build frontend
+RUN npm install && npm run build
 
 # Backend Runtime Stage
 FROM node:18-alpine
@@ -23,13 +21,13 @@ FROM node:18-alpine
 WORKDIR /app/backend
 
 # Copy backend package files
-COPY backend/package*.json ./
+COPY backend/package*.json .
 
 # Install backend production dependencies
 RUN npm install --production
 
 # Copy backend source files
-COPY backend/ ./
+COPY backend/ .
 
 # Copy frontend build from previous stage
 COPY --from=frontend-build /app/dist ./public
@@ -38,7 +36,7 @@ COPY --from=frontend-build /app/dist ./public
 ENV NODE_ENV=production
 ENV PORT=5000
 
-# Expose the port
+# Expose port
 EXPOSE 5000
 
 # Health check
