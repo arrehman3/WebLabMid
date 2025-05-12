@@ -6,8 +6,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./frontend/dist:/usr/share/nginx/html
+       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro  # Add :ro for read-only
+       - ./frontend/dist:/usr/share/nginx/html:ro
     depends_on:
       - backend
 
