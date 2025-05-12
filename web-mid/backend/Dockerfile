@@ -1,7 +1,20 @@
-FROM node:18
+# Server Dockerfile
+FROM node:18-alpine
+
+# Set working directory
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
+
+# Copy package.json and package-lock.json
+COPY backend/package*.json ./
+
+# Install dependencies
+RUN npm install --production
+
+# Copy server source files
+COPY backend/ ./
+
+# Expose the port your server is running on
 EXPOSE 5000
-CMD ["node", "index.js"]
+
+# Start the server
+CMD ["npm", "start"]
