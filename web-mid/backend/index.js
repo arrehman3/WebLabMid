@@ -30,4 +30,4 @@ app.get('/api/visitors', async (req, res) => {
   res.json(visitors);
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));

@@ -8,7 +8,7 @@ export default function VisitorForm() {
 
   // Fetch visitors from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/visitors")
+    fetch("/api/visitors")
       .then(res => res.json())
       .then(data => setVisitors(data));
   }, []);
@@ -20,7 +20,7 @@ export default function VisitorForm() {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const response = await fetch("http://localhost:5000/api/visitors", {
+  const response = await fetch("/api/visitors", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
