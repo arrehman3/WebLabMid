@@ -18,7 +18,7 @@ pipeline {
         stage('Fetch Code') {
             steps {
                 // Replace with your actual repository URL
-                sh 'git clone https://github.com/arrehman3/WebLabMid.git/var/lib/jenkins/DevOps/'
+                sh 'git clone https://github.com/arrehman3/WebLabMid/web-mid.git/var/lib/jenkins/DevOps/'
             }
         }
 
