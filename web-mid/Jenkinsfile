@@ -19,7 +19,7 @@ pipeline {
             steps {
                 // Replace with your actual repository URL
                 sh 'git clone https://github.com/arrehman3/WebLabMid.git /var/lib/jenkins/DevOps/'
-
+            }
         }
 
         stage('Build and Start Docker Compose') {
@@ -40,4 +40,4 @@ pipeline {
         }
     }
 }
-//
+
