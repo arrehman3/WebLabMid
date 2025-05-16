@@ -24,7 +24,7 @@ pipeline {
 
         stage('Build and Start Docker Compose') {
             steps {
-                dir('/var/lib/jenkins/DevOps/web-mid/') {
+                dir('/var/lib/jenkins/DevOps/WebLabMid/web-mid') {
                     sh 'docker compose up -d'
                 }
             }
