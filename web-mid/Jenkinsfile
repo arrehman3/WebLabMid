@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                sh '''
+                    if [ -d "/var/lib/jenkins/web-mid/" ]; then
+                        find "/var/lib/jenkins/web-mid/" -mindepth 1 -delete
+                        echo "Contents of /var/lib/jenkins/web-mid/ have been removed."
+                    else
+                        echo "Directory /var/lib/jenkins/web-mid/ does not exist."
+                    fi
+                '''
+            }
+        }
+        
+        stage('Fetch Code') {
+            steps {
+                // Replace with your actual repository URL
+                sh 'https://github.com/arrehman3/WebLabMid/var/lib/jenkins/web-mid/'
+            }
+        }
+
+        stage('Build and Start Docker Compose') {
+            steps {
+                dir('/var/lib/jenkins/web-mid/') {
+                    sh 'docker compose up -d'
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo 'Pipeline failed!'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+    }
+}
