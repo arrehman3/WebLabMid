@@ -18,14 +18,14 @@ pipeline {
         stage('Fetch Code') {
             steps {
                 // Replace with your actual repository URL
-                sh 'https://github.com/arrehman3/WebLabMid/var/lib/jenkins/web-mid/'
+                sh 'git clone https://github.com/arrehman3/WebLabMid.git/var/lib/jenkins/DevOps/'
             }
         }
 
         stage('Build and Start Docker Compose') {
             steps {
                 dir('/var/lib/jenkins/web-mid/') {
-                    sh 'docker compose up -d'
+                    sh 'docker compose -p thereactapp up -d'
                 }
             }
         }
