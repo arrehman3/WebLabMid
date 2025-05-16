@@ -5,26 +5,26 @@ pipeline {
         stage('Clean Workspace') {
             steps {
                 sh '''
-                    if [ -d "/var/lib/jenkins/DevOps/" ]; then
-                        find "/var/lib/jenkins/DevOps/" -mindepth 1 -delete
-                        echo "Contents of /var/lib/jenkins/DevOps/ have been removed."
-                    else
-                        echo "Directory /var/lib/jenkins/DevOps/ does not exist."
-                    fi
+                    # Ensure the target directory exists
+                    mkdir -p /var/lib/jenkins/DevOps
+
+                    # Remove everything inside the directory
+                    rm -rf /var/lib/jenkins/DevOps/*
+
+                    echo "Cleaned /var/lib/jenkins/DevOps/"
                 '''
             }
         }
-        
+
         stage('Fetch Code') {
             steps {
-                // Replace with your actual repository URL
                 sh 'git clone https://github.com/arrehman3/WebLabMid.git /var/lib/jenkins/DevOps/'
             }
         }
 
         stage('Build and Start Docker Compose') {
             steps {
-                dir('/var/lib/jenkins/DevOps/') {
+                dir('/var/lib/jenkins/DevOps') {
                     sh 'docker compose up -d'
                 }
             }
@@ -40,4 +40,3 @@ pipeline {
         }
     }
 }
-
