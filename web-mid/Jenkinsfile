@@ -5,11 +5,11 @@ pipeline {
         stage('Clean Workspace') {
             steps {
                 sh '''
-                    if [ -d "/var/lib/jenkins/web-mid/" ]; then
-                        find "/var/lib/jenkins/web-mid/" -mindepth 1 -delete
-                        echo "Contents of /var/lib/jenkins/web-mid/ have been removed."
+                    if [ -d "/var/lib/jenkins/DevOps/" ]; then
+                        find "/var/lib/jenkins/DevOps/" -mindepth 1 -delete
+                        echo "Contents of /var/lib/jenkins/DevOps/ have been removed."
                     else
-                        echo "Directory /var/lib/jenkins/web-mid/ does not exist."
+                        echo "Directory /var/lib/jenkins/DevOps/ does not exist."
                     fi
                 '''
             }
@@ -24,7 +24,7 @@ pipeline {
 
         stage('Build and Start Docker Compose') {
             steps {
-                dir('/var/lib/jenkins/web-mid/') {
+                dir('/var/lib/jenkins/DevOps/') {
                     sh 'docker compose -p thereactapp up -d'
                 }
             }
