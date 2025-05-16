@@ -5,26 +5,26 @@ pipeline {
         stage('Clean Workspace') {
             steps {
                 sh '''
-                    # Ensure the target directory exists
+                    # Make sure the base DevOps folder exists
                     mkdir -p /var/lib/jenkins/DevOps
 
-                    # Remove everything inside the directory
-                    rm -rf /var/lib/jenkins/DevOps/*
+                    # Clean the subdirectory where we'll clone the repo
+                    rm -rf /var/lib/jenkins/DevOps/web-mid
 
-                    echo "Cleaned /var/lib/jenkins/DevOps/"
+                    echo "Cleaned /var/lib/jenkins/DevOps/web-mid/"
                 '''
             }
         }
 
         stage('Fetch Code') {
             steps {
-                sh 'git clone https://github.com/arrehman3/WebLabMid.git /var/lib/jenkins/DevOps/'
+                sh 'git clone https://github.com/arrehman3/WebLabMid.git /var/lib/jenkins/DevOps/web-mid'
             }
         }
 
         stage('Build and Start Docker Compose') {
             steps {
-                dir('/var/lib/jenkins/DevOps') {
+                dir('/var/lib/jenkins/DevOps/web-mid') {
                     sh 'docker compose up -d'
                 }
             }
