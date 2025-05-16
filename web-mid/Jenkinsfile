@@ -22,10 +22,24 @@ pipeline {
             }
         }
 
-        stage('Build and Start Docker Compose') {
+        stage('Build and Start Backend') {
             steps {
                 dir('/var/lib/jenkins/DevOps/web-mid/backend') {
-                    sh 'docker compose up -d'
+                    sh '''
+                        docker build -t web-mid-backend .
+                        docker compose up -d
+                    '''
+                }
+            }
+        }
+
+        stage('Build and Start Frontend') {
+            steps {
+                dir('/var/lib/jenkins/DevOps/web-mid/frontend') {
+                    sh '''
+                        docker build -t web-mid-frontend .
+                        docker compose up -d
+                    '''
                 }
             }
         }
