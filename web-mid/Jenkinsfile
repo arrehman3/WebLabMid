@@ -9,22 +9,22 @@ pipeline {
                     mkdir -p /var/lib/jenkins/DevOps
 
                     # Clean the subdirectory where we'll clone the repo
-                    rm -rf /var/lib/jenkins/DevOps/web-mid
+                    rm -rf /var/lib/jenkins/DevOps/WebLabMid
 
-                    echo "Cleaned /var/lib/jenkins/DevOps/web-mid/"
+                    echo "Cleaned /var/lib/jenkins/DevOps/WebLabMid/"
                 '''
             }
         }
 
         stage('Fetch Code') {
             steps {
-                sh 'git clone https://github.com/arrehman3/WebLabMid.git /var/lib/jenkins/DevOps/web-mid'
+                sh 'git clone https://github.com/arrehman3/WebLabMid.git /var/lib/jenkins/DevOps/WebLabMid'
             }
         }
 
         stage('Build and Start Backend') {
             steps {
-                dir('/var/lib/jenkins/DevOps/web-mid/backend') {
+                dir('/var/lib/jenkins/DevOps/WebLabMid/web-mid/backend') {
                     sh '''
                         docker build -t web-mid-backend .
                         docker compose up -d
@@ -35,7 +35,7 @@ pipeline {
 
         stage('Build and Start Frontend') {
             steps {
-                dir('/var/lib/jenkins/DevOps/web-mid/frontend') {
+                dir('/var/lib/jenkins/DevOps/WebLabMid/web-mid/frontend') {
                     sh '''
                         docker build -t web-mid-frontend .
                         docker compose up -d
