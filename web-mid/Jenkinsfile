@@ -27,7 +27,7 @@ pipeline {
                 dir('/var/lib/jenkins/DevOps/WebLabMid/web-mid/backend') {
                     sh '''
                         docker build -t web-mid-backend .
-                        docker compose up -d
+                        docker compose up -d --build
                     '''
                 }
             }
