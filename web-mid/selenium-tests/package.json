@@ -1,0 +1,17 @@
+{
+  "name": "selenium-tests",
+  "version": "1.0.0",
+  "description": "Selenium test suite for web application",
+  "main": "tests.js",
+  "scripts": {
+    "test": "mocha tests.js --timeout 10000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.15.0",
+    "mocha": "^10.2.0",
+    "assert": "^2.1.0"
+  }
+}

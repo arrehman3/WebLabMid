@@ -22,6 +22,30 @@ pipeline {
             }
         }
 
+        stage('Run Selenium Tests') {
+            steps {
+                dir('/var/lib/jenkins/DevOps/WebLabMid/web-mid') {
+                    sh '''
+                        # Install dependencies for selenium tests
+                        cd selenium-tests && npm install
+
+                        # Start the application for testing
+                        cd ../backend && npm start &
+                        cd ../frontend && npm run dev &
+                        
+                        # Wait for the application to start
+                        sleep 30
+                        
+                        # Run selenium tests
+                        cd ../selenium-tests && npm test
+                        
+                        # Clean up
+                        pkill -f "node"
+                    '''
+                }
+            }
+        }
+
         stage('Build and Start Backend') {
             steps {
                 dir('/var/lib/jenkins/DevOps/WebLabMid/web-mid/backend') {
@@ -46,6 +70,10 @@ pipeline {
     }
 
     post {
+        always {
+            // Clean up any running processes
+            sh 'pkill -f "node" || true'
+        }
         failure {
             echo 'Pipeline failed!'
         }
