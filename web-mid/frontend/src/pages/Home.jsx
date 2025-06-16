@@ -41,7 +41,7 @@ export default function Home() {
         <p className="text-gray-600 mb-6">
           Join us in making residential management more efficient and secure.
         </p>
-        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+        <button className="cta-button bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
           Get Started
         </button>
       </div>
