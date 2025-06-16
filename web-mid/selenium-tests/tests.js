@@ -18,21 +18,8 @@ describe('Secure Nest Application Tests', function () {
             .setChromeOptions(options)
             .build();
 
-        // Try ports starting from 5173 up to 5183
-        for (let port = 5173; port <= 5183; port++) {
-            try {
-                await driver.get(`http://localhost:${port}`);
-                baseUrl = `http://localhost:${port}`;
-                break;
-            } catch (error) {
-                continue;
-            }
-        }
-
-        if (!baseUrl) {
-            throw new Error('Could not find running application on any port between 5173-5183');
-        }
-    });
+    await driver.get(`http://localhost:5173`);
+    baseUrl = `http://localhost:5173`;
 
     after(async function () {
         if (driver) {

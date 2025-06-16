@@ -34,7 +34,7 @@ pipeline {
                         cd ../frontend && npm install && npm run dev &
                         
                         # Wait for the application to start
-                        sleep 30
+                        sleep 60
                         
                         # Run selenium tests
                         cd ../selenium-tests && npm test
