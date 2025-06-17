@@ -97,8 +97,9 @@ pipeline {
             """,
                     attachmentsPattern: "${TEST_DIR}/test_output.txt"
                 )
-            }clean up any running processes
-            
+            }
+            // Clean up any running processes
+            sh 'pkill -f "node" || true'
         }
         failure {
             echo 'Pipeline failed!'
