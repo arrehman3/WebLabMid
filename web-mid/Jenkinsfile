@@ -74,7 +74,7 @@ pipeline {
 
     post {
         always {
-            // Cscript {
+            script {
                 def authorEmail = sh(
                     script: "cd $MAIN_DIR && git log -1 --pretty=format:'%ae'",
                     returnStdout: true
