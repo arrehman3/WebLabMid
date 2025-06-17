@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools { 
+        MAIN_DIR = '/var/lib/jenkins/DevOps/WebLabMid'  // Define the directory once
+        TEST_DIR = "${MAIN_DIR}/web-mid/selenium-tests" // Optional: if you're using this too
 
     stages {
         stage('Clean Workspace') {
@@ -71,8 +74,31 @@ pipeline {
 
     post {
         always {
-            // Clean up any running processes
-            sh 'pkill -f "node" || true'
+            // Cscript {
+                def authorEmail = sh(
+                    script: "cd $MAIN_DIR && git log -1 --pretty=format:'%ae'",
+                    returnStdout: true
+                ).trim()
+
+                emailext (
+                    to: authorEmail,
+                    subject: "✅ Jenkins Test Results - ${currentBuild.currentResult}",
+                    body: """
+Hi ${authorEmail},
+
+Your GitHub push triggered an automated test run via Jenkins.
+
+🔧 *Status:* ${currentBuild.currentResult}  
+🔁 *Build #:* ${env.BUILD_NUMBER}  
+📜 *Details:* ${env.BUILD_URL}
+
+Regards,  
+🤖 Jenkins Bot
+""",
+                    attachmentsPattern: "${TEST_DIR}/test_output.txt"
+                )
+            }lean up any running processes
+            
         }
         failure {
             echo 'Pipeline failed!'
